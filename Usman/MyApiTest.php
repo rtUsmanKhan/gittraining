@@ -20,6 +20,10 @@ class MyApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /*
+     * When using arbitrary number of arguments
+     */
+
     public function mytestProvider()
     {
         return array(
