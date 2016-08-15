@@ -39,7 +39,9 @@ class MyApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @param type $two
      * @param type $three
      * @var temp object of mock class
-     * @value return value of mock method
+     * @value return value of mock method getBean
+     * @value1 return value of mock method loadRelationship
+     * @value2 return value of mock method getBeans
      * This functions Mock Account class including its method getBeans
      * The function then returns mock output defined by willReturn method
      * The function then check expected output with mock output
@@ -48,14 +50,29 @@ class MyApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testmytest(/*$one, $two, $three*/)
     {
         $temp = $this->getMockBuilder(Account::class)
-            ->setMethods(['getBeans'])
+            ->setMethods(['getBean','loadRelationship', 'getBeans'])
             ->getMock();
 
         $temp->expects($this->once())
-            ->method('getBeans')
-            ->willReturn('Allen');
+            ->method('getBean')
+            ->willReturn('Target1');
 
-        $value = $temp->getBeans();
-        $this->assertEquals('Allen',$value);
+        $temp->expects($this->once())
+            ->method('loadRelationship')
+            ->with('Target_lead')
+            ->willReturn('true');
+
+        $temp->expects($this->once())
+            ->method('getBeans')
+            ->willReturn('Test Lead');
+
+        $value = $temp->getBean();
+        $value1 = $temp->loadRelationship('Target_lead');
+        $value2 = $temp->getBeans();
+
+        if($value1==true) {
+            $this->assertEquals('Target1',$value);
+            $this->assertEquals('Test Lead',$value2);
+        }
     }
 }
