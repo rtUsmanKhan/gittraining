@@ -16,12 +16,29 @@ public function registerApiRest() {
   );
 }
 
-//This is the method that executes when the endpoint is invoked
+/*
+ * This method collects list of:
+ * All Targets which are converted to Target lists then transform to lead which
+ * progress and become opportunity and finally become Account.
+ * The Targets which are converted to Target lists then transform to lead which
+ * progress and become opportunity only.
+ * The Targets which are converted to Target lists then transform to lead only.
+ * The Targets which are converted to Target lists only.
+ *
+ * All Leads and which progress to become opportunity and finally become Account.
+ * The leads which progress to become opportunity only
+ *
+ * All Opportunities and which matures to Accounts
+ *
+ * It saves the data into associated array with module name and record id.
+ * It saves null value which is used represent the end of related record.
+ * 
+ * It encodes to array to JSON text and returns
+ */
 public function getStockData($api, $args)
 {
     $beanTarget = BeanFactory::getBean('Prospects')->get_list('prospects.first_name');
-    $GLOBALS['log']->fatal($beanTarget);
-
+    $i=0;
     $GLOBALS['log']->fatal("All Prospects with related prospects lists, leads, opportunities and accounts");
 
     foreach($beanTarget['list'] as $item) {
@@ -42,35 +59,34 @@ public function getStockData($api, $args)
 
                     foreach ($relatedBeansLeads as $item2) {
                         $GLOBALS['log']->fatal($item2->first_name);
-                        $data['targets'][$item2->id] = $item2->name;
+                        $data['targets'][$item2->id] = $item2->first_name;
 
                         if ($item1->load_relationship('opportunity')) {
                             $relatedBeansOpportunity = $item2->opportunity->getBeans();
                             $GLOBALS['log']->fatal("Lead Which became opportunity");
                             foreach ($relatedBeansOpportunity as $item3) {
                                 $GLOBALS['log']->fatal($item3->name);
-
-                                $data['targets'][$item->id] = $item3->name;
+                                $data['targets'][$item3->id] = $item3->name;
 
                                 if ($item1->load_relationship('accounts')) {
                                     $relatedBeansAccounts = $item3->accounts->getBeans();
                                     $GLOBALS['log']->fatal("Opportunity Which became Account");
                                     foreach ($relatedBeansAccounts as $item4) {
                                         $GLOBALS['log']->fatal($item4->name);
-                                        $data['targets'][$item4->id] = $item3->name;
+                                        $data['targets'][$item4->id] = $item4->name;
                                     }
                                 }
                             }
+                            $data['targets']['End'.$i++] = null;
                         }
                     }
+                    $data['targets']['End'.$i++] = null;
                 }
             }
         }
     }
 
-
     $GLOBALS['log']->fatal("All Leaders Lists with its related Opportunity and Accounts");
-
 
     $beanLeads = BeanFactory::getBean('Leads')->get_list('first_name');
 
@@ -97,6 +113,7 @@ public function getStockData($api, $args)
                     }
                 }
             }
+            $data['lead']['End'.$i++] = null;
         }
     }
 
@@ -115,12 +132,13 @@ public function getStockData($api, $args)
 
             foreach ($relatedBeansAccounts as $item2) {
                 $GLOBALS['log']->fatal($item2->name);
-                $data['opp'][$item2->id] = $item2->name;
+                $data['opp'][$item2->id++] = $item2->name;
+                $data['opp']['End'.$i++] = null;
             }
         }
     }
-    $jdata = json_encode($data);
 
+    $jdata = json_encode($data);
     return $jdata;
 }
     }
