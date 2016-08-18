@@ -1,12 +1,51 @@
 <div>
-<h1>My API</h1>
+    <ul>
+        <h3> "My API Data" </h3>
+    </ul>
 </div>
 
-<div>
+<div  class="list-view">
+        <h2>All Targets</h2>
+        <table class="table table-striped dataTable">
+            <tr>
+                <th>Targets</th>
+                <th>Targets List</th>
+                <th>Leads</th>
+                <th>Opportunity</th>
+                <th>Accounts</th>
+            </tr>
 
-    {{log myData}}
+        {{#each targets}}
+            {{#if this}}
+                    <td>{{this}}</td>
+            {{else}}
+                <td>Not Available</td>
+                <tr>
+                </tr>
+            {{/if}}
+            {{/each}}
+        </table>
 
-    {{#each this}}
-        {{this}}
-    {{/each}}
+
+    <ul>
+        <h2>All Leads</h2>
+        {{#each lead}}
+            {{#if this}}
+                {{this}}-->
+            {{else}}
+                ends
+            {{/if}}
+        {{/each}}
+    </ul>
+
+    <ul>
+        <h2>All Opportunities</h2>
+        {{#each opportunity}}
+            {{#if this}}
+                {{this}}-->
+            {{else}}
+                ends
+            {{/if}}
+        {{/each}}
+    </ul>
 </div>
