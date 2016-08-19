@@ -32,7 +32,7 @@ public function registerApiRest() {
  *
  * It saves the data into associated array with module name and record id.
  * It saves null value which is used represent the end of related record.
- * 
+ *
  * It encodes to array to JSON text and returns
  */
 public function getStockData($api, $args)
@@ -49,39 +49,67 @@ public function getStockData($api, $args)
             $GLOBALS['log']->fatal("Prospect Which became Prospects Lists");
             $relatedBeansPlist = $item->prospect_lists->getBeans();
 
-            foreach ($relatedBeansPlist as $item1) {
-                $GLOBALS['log']->fatal($item1->name);
-                $data['targets'][$item1->id] = $item1->name;
+            if(!empty($relatedBeansPlist)) {
+                foreach ($relatedBeansPlist as $item1) {
+                    $GLOBALS['log']->fatal($item1->name);
+                    $data['targets'][$item1->id] = $item1->name;
 
-                if ($item1->load_relationship('leads')) {
-                    $relatedBeansLeads = $item1->leads->getBeans();
-                    $GLOBALS['log']->fatal("Prospect List Which became Leads");
+                    if ($item1->load_relationship('leads')) {
+                        $relatedBeansLeads = $item1->leads->getBeans();
+                        $GLOBALS['log']->fatal("Prospect List Which became Leads");
+                        if(!empty($relatedBeansLeads)) {
+                            foreach ($relatedBeansLeads as $item2) {
+                                $GLOBALS['log']->fatal($item2->first_name);
+                                $data['targets'][$item2->id] = $item2->first_name;
 
-                    foreach ($relatedBeansLeads as $item2) {
-                        $GLOBALS['log']->fatal($item2->first_name);
-                        $data['targets'][$item2->id] = $item2->first_name;
+                                if ($item1->load_relationship('opportunity')) {
+                                    $relatedBeansOpportunity = $item2->opportunity->getBeans();
+                                    $GLOBALS['log']->fatal("Lead Which became opportunity");
+                                    if(!empty($relatedBeansOpportunity)) {
+                                        foreach ($relatedBeansOpportunity as $item3) {
+                                            $GLOBALS['log']->fatal($item3->name);
+                                            $data['targets'][$item3->id] = $item3->name;
 
-                        if ($item1->load_relationship('opportunity')) {
-                            $relatedBeansOpportunity = $item2->opportunity->getBeans();
-                            $GLOBALS['log']->fatal("Lead Which became opportunity");
-                            foreach ($relatedBeansOpportunity as $item3) {
-                                $GLOBALS['log']->fatal($item3->name);
-                                $data['targets'][$item3->id] = $item3->name;
-
-                                if ($item1->load_relationship('accounts')) {
-                                    $relatedBeansAccounts = $item3->accounts->getBeans();
-                                    $GLOBALS['log']->fatal("Opportunity Which became Account");
-                                    foreach ($relatedBeansAccounts as $item4) {
-                                        $GLOBALS['log']->fatal($item4->name);
-                                        $data['targets'][$item4->id] = $item4->name;
+                                            if ($item1->load_relationship('accounts')) {
+                                                $relatedBeansAccounts = $item3->accounts->getBeans();
+                                                $GLOBALS['log']->fatal("Opportunity Which became Account");
+                                                if(!empty($relatedBeansAccounts)) {
+                                                    foreach ($relatedBeansAccounts as $item4) {
+                                                        $GLOBALS['log']->fatal($item4->name);
+                                                        $data['targets'][$item4->id] = $item4->name;
+                                                    }
+                                                }
+                                                else {
+                                                    $data['targets']['End'.$i++] = 'Not Available';
+                                                    $data['targets']['End'.$i++] = null;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
+                                else {
+
+                                    $data['targets']['End'.$i++] = 'Not Available';
+                                    $data['targets']['End'.$i++] = 'Not Available';
+                                    $data['targets']['End'.$i++] = null;
+                                }
                             }
+                        }
+                        else {
+                            $data['targets']['End'.$i++] = 'Not Available';
+                            $data['targets']['End'.$i++] = 'Not Available';
+                            $data['targets']['End'.$i++] = 'Not Available';
                             $data['targets']['End'.$i++] = null;
                         }
                     }
-                    $data['targets']['End'.$i++] = null;
                 }
+            }
+            else {
+                $data['targets']['End'.$i++] = 'Not Available';
+                $data['targets']['End'.$i++] = 'Not Available';
+                $data['targets']['End'.$i++] = 'Not Available';
+                $data['targets']['End'.$i++] = 'Not Available';
+                $data['targets']['End'.$i++] = null;
             }
         }
     }
@@ -98,22 +126,33 @@ public function getStockData($api, $args)
         if ($item->load_relationship('opportunity')) {
             $relatedBeansOpportunity = $item->opportunity->getBeans();
             $GLOBALS['log']->fatal("Lead Which became opportunity");
+            if(!empty($relatedBeansOpportunity)) {
+                foreach ($relatedBeansOpportunity as $opp) {
+                    $GLOBALS['log']->fatal($opp->name);
+                    $data['lead'][$opp->id] = $opp->name;
 
-            foreach ($relatedBeansOpportunity as $opp) {
-                $GLOBALS['log']->fatal($opp->name);
-                $data['lead'][$opp->id] = $opp->name;
+                    if ($opp->load_relationship('accounts')) {
+                        $relatedBeansAccounts = $opp->accounts->getBeans();
+                        $GLOBALS['log']->fatal("Opportunity Which became Account");
 
-                if ($opp->load_relationship('accounts')) {
-                    $relatedBeansAccounts = $opp->accounts->getBeans();
-                    $GLOBALS['log']->fatal("Opportunity Which became Account");
-
-                    foreach ($relatedBeansAccounts as $item2) {
-                        $GLOBALS['log']->fatal($item2->name);
-                        $data['lead'][$item2->id] = $item2->name;
+                        if(!empty($relatedBeansAccounts)) {
+                            foreach ($relatedBeansAccounts as $item2) {
+                                $GLOBALS['log']->fatal($item2->name);
+                                $data['lead'][$item2->id] = $item2->name;
+                                $data['lead']['End'.$i++] = null;
+                            }
+                        }
+                        else {
+                            $data['lead']['End'.$i++] = null;
+                        }
                     }
                 }
             }
-            $data['lead']['End'.$i++] = null;
+            else {
+                $data['lead']['End'.$i++] = 'Not Available';
+                $data['lead']['End'.$i++] = 'Not Available';
+                $data['lead']['End'.$i++] = null;
+            }
         }
     }
 
@@ -129,10 +168,15 @@ public function getStockData($api, $args)
         if ($item->load_relationship('accounts')) {
             $relatedBeansAccounts = $item->accounts->getBeans();
             $GLOBALS['log']->fatal("Opportunity Which became Account");
-
-            foreach ($relatedBeansAccounts as $item2) {
-                $GLOBALS['log']->fatal($item2->name);
-                $data['opp'][$item2->id++] = $item2->name;
+            if(!empty($relatedBeansAccounts)) {
+                foreach ($relatedBeansAccounts as $item2) {
+                    $GLOBALS['log']->fatal($item2->name);
+                    $data['opp'][$item2->id++] = $item2->name;
+                    $data['opp']['End'.$i++] = null;
+                }
+            }
+            else {
+                $data['opp']['End'.$i++] = 'Not Available';
                 $data['opp']['End'.$i++] = null;
             }
         }

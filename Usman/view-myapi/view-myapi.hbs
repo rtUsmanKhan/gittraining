@@ -4,7 +4,8 @@
     </ul>
 </div>
 
-<div  class="list-view">
+<div class="list-view">
+<div class="main-pane span8">
         <h2>All Targets</h2>
         <table class="table table-striped dataTable">
             <tr>
@@ -14,38 +15,48 @@
                 <th>Opportunity</th>
                 <th>Accounts</th>
             </tr>
-
         {{#each targets}}
             {{#if this}}
                     <td>{{this}}</td>
             {{else}}
                 <td>Not Available</td>
-                <tr>
-                </tr>
+                    <tr>
+                    </tr>
             {{/if}}
             {{/each}}
         </table>
 
-
-    <ul>
         <h2>All Leads</h2>
+    <table class="table table-striped dataTable">
+        <tr>
+            <th>Leads</th>
+            <th>Opportunity</th>
+            <th>Accounts</th>
+        </tr>
         {{#each lead}}
             {{#if this}}
-                {{this}}-->
+                <td>{{this}}</td>
             {{else}}
-                ends
+                <tr>
+                </tr>
             {{/if}}
         {{/each}}
-    </ul>
+    </table>
 
-    <ul>
         <h2>All Opportunities</h2>
-        {{#each opportunity}}
-            {{#if this}}
-                {{this}}-->
-            {{else}}
-                ends
-            {{/if}}
-        {{/each}}
-    </ul>
+            <table class="table table-striped dataTable">
+                <tr>
+                    <th>Opportunity</th>
+                    <th>Accounts</th>
+                </tr>
+                {{#each opportunity}}
+                    {{#if this}}
+                        <td>{{this}}</td>
+                    {{else}}
+                        <tr>
+                        </tr>
+                    {{/if}}
+                {{/each}}
+            </table>
+</div>
 </div>
