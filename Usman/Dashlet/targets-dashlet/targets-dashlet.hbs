@@ -1,0 +1,12 @@
+<div class="forecast-details">
+    {{#each targets}}
+        <div class="row-fluid">
+        {{#if this}}
+            <td>{{this}}</td>
+        {{else}}
+            <tr>
+            </tr>
+        {{/if}}
+        </div>
+    {{/each}}
+</div>
