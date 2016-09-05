@@ -50,8 +50,29 @@
         })
     },
     save_button : function () {
-        app.router.refresh();
-        console.log('Refreshed');
+        //app.router.refresh();
+        
+	//app.router.refresh();
+        //Backbone.history.loadUrl(Backbone.history.fragment);
+        check = 3;
+
+        /*var opp = {
+            name: this.model.get('name')
+        };
+        //console.log(opp);
+
+        rivets.configure({
+            templateDelimiters : ['{{', '}}']
+        });
+
+        rivets.bind(
+            document.querySelector('#dt'),
+            {opp : opp}
+        );*/
+        document.getElementById('userProfile');
+        $('#userProfile').text(this.model.get('name'));
+	
+	console.log('Refreshed');
     },
     
 })
